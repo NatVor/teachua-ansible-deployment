@@ -1,0 +1,83 @@
+---
+- name: Install MariaDB server and Python MySQL client
+  package:
+    name:
+      - mariadb-server
+      - python3-mysqldb
+    state: latest
+
+- name: Start MySQL service
+  service:
+    name: mariadb
+    state: started
+    enabled: yes
+  become: yes
+
+- name: Remove anonymous user account for localhost
+  mysql_user:
+    name: ''
+    host: localhost
+    state: absent
+    login_unix_socket: /run/mysqld/mysqld.sock
+
+- name: Remove all anonymous user accounts
+  mysql_user:
+    name: ''
+    host_all: true
+    state: absent
+
+- name: Create database
+  mysql_db:
+    name: teachua
+    collation: utf8_bin
+    encoding: utf8
+    state: present
+    login_user: root
+    login_password: "{{ root_password }}"
+  become: yes
+
+- name: Create database user with all database privileges
+  community.mysql.mysql_user:
+    name: "{{ db_user }}"
+    password: "{{ db_password }}"
+    priv: '*.*:ALL'
+    state: present
+
+- name: Copy data.sql to the server
+  ansible.builtin.copy:
+    src: "{{ sql_file }}"
+    dest: /tmp/data.sql
+  become: yes
+
+- name: Import initial data using shell command
+  ansible.builtin.shell: >
+    mysql -u {{ db_user }} -p{{ db_password }} {{ db_name }} < /tmp/data.sql
+  become: yes
+  ignore_errors: yes
+
+- name: Wait for MariaDB to be ready
+  ansible.builtin.wait_for:
+    port: 3306
+    state: started
+    timeout: 30
+
+- name: Configure MariaDB for remote access
+  ansible.builtin.lineinfile:
+    path: /etc/mysql/my.cnf
+    regexp: '^bind-address\s*='
+    line: 'bind-address = 0.0.0.0'
+    create: yes
+    backup: yes
+  notify:
+    - Restart MariaDB
+
+- name: Set MariaDB to listen on all interfaces
+  ansible.builtin.blockinfile:
+    path: /etc/mysql/my.cnf
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+    content: |
+      [mysqld]
+      skip-networking=0
+      skip-bind-address
+  notify:
+    - Restart MariaDB

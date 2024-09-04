@@ -1,0 +1,7 @@
+# /vagrant_data/teachua/ansible/roles/database/vars/main.yml 
+
+root_password: "root"
+db_user: "user"
+db_password: "password"
+db_name: "teachua"
+sql_file: "/home/azureuser/ansible/roles/database/templates/data.sql"

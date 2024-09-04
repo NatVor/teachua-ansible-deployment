@@ -1,0 +1,11 @@
+# defaults file for backend
+
+---
+tomcat_version: "9.0.93"
+tomcat_url: "https://downloads.apache.org/tomcat/tomcat-9/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.tar.gz"
+war_file_path: "/home/azureuser/teachua-backend-nv/target/dev.war"
+
+jdbc_driver: "org.mariadb.jdbc.Driver"
+datasource_url: "jdbc:mariadb://10.0.0.5:3306/teachua"
+datasource_user: "user"
+datasource_password: "password"

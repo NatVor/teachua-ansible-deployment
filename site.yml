@@ -1,0 +1,4 @@
+- import_playbook: database.yml
+- import_playbook: backend.yml
+#- import_playbook: playbooks/frontend.yml 
+#- import_playbook: playbooks/loadbalancer.yml
