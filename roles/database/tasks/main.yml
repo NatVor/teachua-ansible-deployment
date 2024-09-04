@@ -41,6 +41,7 @@
     name: "{{ db_user }}"
     password: "{{ db_password }}"
     priv: '*.*:ALL'
+    host: '%'
     state: present
 
 - name: Copy data.sql to the server

@@ -1,0 +1,30 @@
+# tasks file for frontend
+
+---
+- name: Install Nginx
+  ansible.builtin.apt:
+    name: nginx
+    state: present
+  become: yes
+
+- name: Copy Nginx configuration
+  ansible.builtin.template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/sites-available/default
+  become: yes
+
+- name: Ensure Nginx is running
+  ansible.builtin.systemd:
+    name: nginx
+    state: started
+    enabled: yes
+  become: yes
+
+- name: Deploy frontend build
+  ansible.builtin.copy:
+    src: /path/to/local/build/
+    dest: /usr/share/nginx/html/
+    owner: www-data
+    group: www-data
+    mode: '0755'
+  become: yes

@@ -1,0 +1,8 @@
+---
+# Vars for frontend role
+
+nginx_server_name: "10.0.0.8"
+frontend_build_path: "/path/to/local/build/"
+nginx_root: "/usr/share/nginx/html/"
+backend_server: "http://10.0.0.6:8080"
+

@@ -61,6 +61,26 @@
     group: root
     mode: '0644'
 
+- name: Ensure Tomcat is listening on all IP addresses
+  ansible.builtin.lineinfile:
+    path: /opt/tomcat/latest/conf/server.xml
+    regexp: '^\s*address="[^"]*"'
+    line: '    address="0.0.0.0"'
+    state: present
+    backup: yes
+    insertafter: '    port="8080" protocol="HTTP/1.1"'
+    owner: root
+    group: root
+    mode: '0644'
+
+# - name: Deploy updated server.xml
+#  ansible.builtin.template:
+#    src: server.xml.j2
+#    dest: /opt/tomcat/latest/conf/server.xml
+#    owner: root
+#    group: root
+#    mode: '0644'
+
 - name: Reload systemd
   ansible.builtin.systemd:
     daemon_reload: yes
